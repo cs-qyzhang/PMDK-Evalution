@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <sys/time.h>
 
 #define FILE_PATH "/mnt/pmem0/persistent"
@@ -20,7 +21,7 @@
                                 stop.tv_usec - start.tv_usec);       \
   } while (0)
 
-#define TEST_SIZE 10000000
+#define TEST_SIZE 1
 
 #define FILE_SIZE ((size_t)(1024 * 1024 * 8)) /* 8 MiB */
 
@@ -31,3 +32,5 @@ struct rectangle {
   int x;
   int y;
 };
+
+#define BIUBIUBIU() *(char*)NULL = 'a'

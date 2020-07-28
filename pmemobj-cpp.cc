@@ -49,6 +49,7 @@ int main(void) {
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     transaction::run(pop, [&](){
+      pmemobj_tx_add_range_direct(proot->rect.get(), sizeof(rectangle));
       proot->rect->x = 10;
       proot->rect->y = 10;
       proot->rect.persist();
@@ -63,6 +64,20 @@ int main(void) {
       proot->p_rect->x = 10;
       proot->p_rect->y = 10;
     });
+  }
+  TIMER_STOP;
+
+  printf("transaction run snapshot\n");
+  TIMER_START;
+  for (int i = 0; i < TEST_SIZE; ++i) {
+    // transaction::run(pop, [&](){
+      proot->p_rect->x = 10;
+      proot->p_rect->y = 10;
+      int a = 10;
+      a = a + 10;
+      pop.persist(proot->p_rect->x);
+      pop.persist(proot->p_rect->y);
+    // });
   }
   TIMER_STOP;
 
