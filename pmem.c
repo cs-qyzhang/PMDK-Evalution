@@ -20,6 +20,7 @@ int main(void) {
 
   TIMER_INIT;
 
+  printf("pmem_persist()\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     root->rect.x = 10;
@@ -36,6 +37,7 @@ int main(void) {
   }
   TIMER_STOP;
 
+  printf("pmem_memcpy_persist()\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     struct rectangle tmp;

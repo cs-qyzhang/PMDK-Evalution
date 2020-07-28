@@ -45,14 +45,6 @@ int main(void) {
   }
   TIMER_STOP;
 
-  printf("memcpy_persist()\n");
-  TIMER_START;
-  for (int i = 0; i < TEST_SIZE; ++i) {
-    rectangle tmp1(10, 10);
-    pop.memcpy_persist(proot->rect.get(), &tmp1, sizeof(tmp1));
-  }
-  TIMER_STOP;
-
   printf("transaction run\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {

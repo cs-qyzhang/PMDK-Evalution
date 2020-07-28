@@ -20,6 +20,7 @@ int main(void) {
 
   TIMER_INIT;
 
+  printf("pmemobj_persist()\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     proot->rect.x = 10;
@@ -29,6 +30,7 @@ int main(void) {
   }
   TIMER_STOP;
 
+  printf("pmemobj_memcpy_persist()\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     struct rectangle tmp;
@@ -38,5 +40,16 @@ int main(void) {
   }
   TIMER_STOP;
 
+  printf("pmemobj_publish()\n");
+  TIMER_START;
+  for (int i = 0; i < TEST_SIZE; ++i) {
+    struct pobj_action act[2];
+    pmemobj_set_value(pop, &act[0], &proot->rect.x, 10);
+    pmemobj_set_value(pop, &act[1], &proot->rect.y, 10 );
+    pmemobj_publish(pop, act, 2);
+  }
+  TIMER_STOP;
+
+  pmemobj_close(pop);
   return 0;
 }
