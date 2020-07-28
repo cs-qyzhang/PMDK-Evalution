@@ -9,3 +9,6 @@ target_link_libraries(obj_test pmemobj)
 
 add_executable(tx_test obj_transaction.c)
 target_link_libraries(tx_test pmemobj)
+
+add_executable(cpp_test pmemobj-cpp.cc)
+target_link_libraries(cpp_test pmemobj)

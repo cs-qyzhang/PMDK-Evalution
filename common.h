@@ -25,6 +25,9 @@
 #define FILE_SIZE ((size_t)(1024 * 1024 * 8)) /* 8 MiB */
 
 struct rectangle {
+#ifdef __cplusplus
+  rectangle(int x, int y): x(x), y(y) {}
+#endif
   int x;
   int y;
 };
