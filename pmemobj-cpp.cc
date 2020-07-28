@@ -7,32 +7,33 @@
 
 using namespace pmem::obj;
 
+struct p_rectangle {
+  p_rectangle(int x, int y): x(x), y(y) {}
+  p<int> x;
+  p<int> y;
+};
+
 struct root {
-  persistent_ptr<rectangle> mdata;
+  persistent_ptr<rectangle> rect;
+  persistent_ptr<p_rectangle> p_rect;
 };
 
 int main(void) {
   remove_file();
-  auto pop = pool<root>::create(FILE_PATH, "rect_calc", FILE_SIZE * 256, 0666);
+  auto pop = pool<root>::create(FILE_PATH, "rect_calc", FILE_SIZE, 0666);
   auto proot = pop.root();
 
   TIMER_INIT;
 
-  transaction::run(pop, [&](){proot->mdata = make_persistent<rectangle>(1, 1);});
+  transaction::run(pop, [&](){proot->rect = make_persistent<rectangle>(1, 1);});
+  transaction::run(pop, [&](){proot->p_rect = make_persistent<p_rectangle>(1, 1);});
 
   printf("persist()\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
-    proot->mdata->x = 10;
-    proot->mdata->y = 10;
-    proot->mdata.persist();
-  }
-  TIMER_STOP;
-
-  printf("make_persistent\n");
-  TIMER_START;
-  for (int i = 0; i < TEST_SIZE; ++i) {
-    transaction::run(pop, [&](){proot->mdata = make_persistent<rectangle>(5, 5);});
+    proot->rect->x = 10;
+    proot->rect->y = 10;
+    proot->rect.persist();
   }
   TIMER_STOP;
 
@@ -40,27 +41,20 @@ int main(void) {
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     transaction::run(pop, [&](){
-      proot->mdata->x = 10;
-      proot->mdata->y = 10;
+      proot->rect->x = 10;
+      proot->rect->y = 10;
+      proot->rect.persist();
     });
   }
   TIMER_STOP;
 
-  printf("transaction run persist\n");
+  printf("transaction run snapshot\n");
   TIMER_START;
   for (int i = 0; i < TEST_SIZE; ++i) {
     transaction::run(pop, [&](){
-      proot->mdata->x = 10;
-      proot->mdata->y = 10;
-      proot->mdata.persist();
+      proot->p_rect->x = 10;
+      proot->p_rect->y = 10;
     });
-  }
-  TIMER_STOP;
-
-  printf("make_persistent_atomic\n");
-  TIMER_START;
-  for (int i = 0; i < TEST_SIZE; ++i) {
-    transaction::run(pop, [&](){make_persistent_atomic<rectangle>(pop, proot->mdata, 10, 10);});
   }
   TIMER_STOP;
 
